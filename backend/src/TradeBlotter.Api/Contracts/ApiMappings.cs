@@ -16,4 +16,9 @@ public static class ApiMappings
         trade.Price,                     // price is returned as entered (not rounded)
         Money.Round(trade.Notional),     // notional rounded to 2dp for display
         trade.Timestamp);
+
+    public static PositionResponse ToResponse(this Position position) => new(
+        position.Symbol,
+        position.NetQuantity,
+        Money.Round(position.AverageCost));  // average cost rounded to 2dp for display
 }

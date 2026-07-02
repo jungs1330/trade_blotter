@@ -1,6 +1,7 @@
 using System.Text.Json;
 using TradeBlotter.Api.Contracts;
 using TradeBlotter.Api.Data;
+using TradeBlotter.Api.Services;
 using TradeBlotter.Api.Validation;
 
 // =============================================================================
@@ -60,6 +61,12 @@ app.MapPost("/trades", async (HttpContext http, TradeRepository repo) =>
 // GET /trades — all trades, newest first.
 app.MapGet("/trades", (TradeRepository repo) =>
     Results.Ok(repo.GetAllNewestFirst().Select(trade => trade.ToResponse())));
+
+// GET /positions — positions derived from trade history (net qty + moving-average cost).
+// Zero-net symbols are omitted by the calculator.
+app.MapGet("/positions", (TradeRepository repo) =>
+    Results.Ok(PositionCalculator.Calculate(repo.GetAllChronological())
+        .Select(position => position.ToResponse())));
 
 app.Run();
 

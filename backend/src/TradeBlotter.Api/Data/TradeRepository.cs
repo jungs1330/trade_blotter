@@ -64,6 +64,21 @@ public sealed class TradeRepository
             .Select(row => row.ToTrade())
             .ToList();
     }
+
+    /// <summary>
+    /// All trades ordered oldest-first, for the position calculation. The accounting fold
+    /// re-sorts defensively, but reading in chronological order keeps intent clear.
+    /// </summary>
+    public IReadOnlyList<Trade> GetAllChronological()
+    {
+        using var connection = _db.OpenConnection();
+        return connection
+            .Query<TradeRow>(
+                "SELECT id, symbol, side, quantity, price, timestamp " +
+                "FROM trades ORDER BY timestamp ASC, id ASC")
+            .Select(row => row.ToTrade())
+            .ToList();
+    }
 }
 
 /// <summary>
