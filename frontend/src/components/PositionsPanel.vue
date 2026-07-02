@@ -15,7 +15,7 @@ import { useBlotterStore } from '../stores/blotter'
 import { formatCurrency, formatQuantity } from '../utils/format'
 
 const store = useBlotterStore()
-const { positions, loading } = storeToRefs(store)
+const { filteredPositions, loading, symbolQuery } = storeToRefs(store)
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const { positions, loading } = storeToRefs(store)
     <h2 class="card__heading">Positions</h2>
 
     <DataTable
-      :value="positions"
+      :value="filteredPositions"
       :loading="loading"
       data-key="symbol"
       sort-field="symbol"
@@ -32,7 +32,9 @@ const { positions, loading } = storeToRefs(store)
       size="small"
       striped-rows
     >
-      <template #empty>No open positions.</template>
+      <template #empty>
+        {{ symbolQuery ? `No positions match “${symbolQuery}”.` : 'No open positions.' }}
+      </template>
 
       <Column field="symbol" header="Symbol" sortable />
 

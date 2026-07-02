@@ -17,12 +17,30 @@ export const useBlotterStore = defineStore('blotter', () => {
   const positions = ref<Position[]>([])
   const loading = shallowRef(false)
   const error = shallowRef<string | null>(null)
+  // Shared symbol filter applied to both the blotter and the positions panel.
+  const symbolQuery = shallowRef('')
 
   // --- getters ---
   // The API already returns newest-first, but this derives a stable, explicitly sorted
   // view (newest timestamp first) that the blotter table binds to as its default order.
   const sortedTrades = computed(() =>
     [...trades.value].sort((a, b) => b.timestamp.localeCompare(a.timestamp)),
+  )
+
+  // Case-insensitive symbol filter. An empty query shows everything; symbols are stored
+  // uppercase, so the query is uppercased and matched as a substring (typing "aa" finds AAPL).
+  const normalizedQuery = computed(() => symbolQuery.value.trim().toUpperCase())
+
+  const filteredTrades = computed(() =>
+    normalizedQuery.value
+      ? sortedTrades.value.filter((trade) => trade.symbol.includes(normalizedQuery.value))
+      : sortedTrades.value,
+  )
+
+  const filteredPositions = computed(() =>
+    normalizedQuery.value
+      ? positions.value.filter((position) => position.symbol.includes(normalizedQuery.value))
+      : positions.value,
   )
 
   // --- actions ---
@@ -69,8 +87,11 @@ export const useBlotterStore = defineStore('blotter', () => {
     positions,
     loading,
     error,
+    symbolQuery,
     // getters
     sortedTrades,
+    filteredTrades,
+    filteredPositions,
     // actions
     fetchTrades,
     fetchPositions,

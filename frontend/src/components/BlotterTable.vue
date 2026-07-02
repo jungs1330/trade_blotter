@@ -14,7 +14,7 @@ import { useBlotterStore } from '../stores/blotter'
 import { formatCurrency, formatDateTime, formatPrice, formatQuantity } from '../utils/format'
 
 const store = useBlotterStore()
-const { sortedTrades, loading } = storeToRefs(store)
+const { filteredTrades, loading, symbolQuery } = storeToRefs(store)
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const { sortedTrades, loading } = storeToRefs(store)
     <h2 class="card__heading">Blotter</h2>
 
     <DataTable
-      :value="sortedTrades"
+      :value="filteredTrades"
       :loading="loading"
       data-key="id"
       sort-field="timestamp"
@@ -34,7 +34,9 @@ const { sortedTrades, loading } = storeToRefs(store)
       size="small"
       striped-rows
     >
-      <template #empty>No trades yet — submit one above.</template>
+      <template #empty>
+        {{ symbolQuery ? `No trades match “${symbolQuery}”.` : 'No trades yet — submit one above.' }}
+      </template>
 
       <Column field="timestamp" header="Time" sortable>
         <template #body="{ data }">{{ formatDateTime(data.timestamp) }}</template>
