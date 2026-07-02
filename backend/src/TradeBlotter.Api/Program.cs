@@ -30,7 +30,28 @@ builder.Services.AddSingleton(sp =>
     new Database(connectionString, sp.GetRequiredService<ILogger<Database>>()));
 builder.Services.AddScoped<TradeRepository>();
 
+// CORS: the Vue dev server runs on a different origin than the API, so the SPA needs an
+// explicit allowance to call it in development. Both localhost and 127.0.0.1 forms of the
+// Vite port are permitted since browsers may use either.
+const string SpaCorsPolicy = "SpaCors";
+builder.Services.AddCors(options =>
+    options.AddPolicy(SpaCorsPolicy, policy => policy
+        .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod()));
+
 var app = builder.Build();
+
+// Unexpected errors -> logged by the middleware and returned as a generic 500 envelope
+// (no stack traces leak to the client).
+app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
+{
+    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+    await context.Response.WriteAsJsonAsync(
+        ErrorEnvelope.Of("INTERNAL_ERROR", "An unexpected error occurred."));
+}));
+
+app.UseCors(SpaCorsPolicy);
 
 // Apply schema on startup. schema.sql is copied next to the built assembly, so we
 // resolve it relative to AppContext.BaseDirectory (stable across cwd/test hosts).
@@ -78,6 +99,11 @@ app.MapGet("/trades", (TradeRepository repo) =>
 app.MapGet("/positions", (TradeRepository repo) =>
     Results.Ok(PositionCalculator.Calculate(repo.GetAllChronological())
         .Select(position => position.ToResponse())));
+
+// Unknown routes -> 404 with the same error-envelope shape as other errors.
+app.MapFallback(() => Results.Json(
+    ErrorEnvelope.Of("NOT_FOUND", "The requested resource was not found."),
+    statusCode: StatusCodes.Status404NotFound));
 
 app.Run();
 
