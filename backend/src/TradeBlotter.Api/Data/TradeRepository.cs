@@ -19,6 +19,38 @@ public sealed class TradeRepository
     public TradeRepository(Database db) => _db = db;
 
     /// <summary>
+    /// Persist a validated trade and return the resulting ledger row, including the
+    /// server-assigned <c>id</c> and <c>timestamp</c>.
+    /// </summary>
+    /// <remarks>
+    /// The timestamp is generated here (UTC, millisecond precision, ISO-8601 with a
+    /// trailing <c>Z</c>) so it is authoritative and any client value is irrelevant.
+    /// Price is written as a canonical invariant-culture decimal string. The row id is
+    /// obtained with SQLite's <c>RETURNING</c> clause in the same statement.
+    /// </remarks>
+    public Trade InsertTrade(CreateTradeCommand command)
+    {
+        var timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture);
+        var priceText = command.Price.ToString(CultureInfo.InvariantCulture);
+
+        using var connection = _db.OpenConnection();
+        var id = connection.ExecuteScalar<long>(
+            "INSERT INTO trades (symbol, side, quantity, price, timestamp) " +
+            "VALUES (@Symbol, @Side, @Quantity, @Price, @Timestamp) " +
+            "RETURNING id;",
+            new
+            {
+                command.Symbol,
+                Side = command.Side.ToString(),
+                command.Quantity,
+                Price = priceText,
+                Timestamp = timestamp
+            });
+
+        return new Trade(id, command.Symbol, command.Side, command.Quantity, command.Price, timestamp);
+    }
+
+    /// <summary>
     /// All trades ordered newest-first for <c>GET /trades</c>. The <c>id</c> tiebreaker
     /// makes ordering deterministic when two trades share a millisecond-precision timestamp.
     /// </summary>

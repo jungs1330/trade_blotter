@@ -1,5 +1,7 @@
+using System.Text.Json;
 using TradeBlotter.Api.Contracts;
 using TradeBlotter.Api.Data;
+using TradeBlotter.Api.Validation;
 
 // =============================================================================
 // Trade Blotter API host.
@@ -29,6 +31,31 @@ var app = builder.Build();
 // resolve it relative to AppContext.BaseDirectory (stable across cwd/test hosts).
 var schemaPath = Path.Combine(AppContext.BaseDirectory, "schema.sql");
 app.Services.GetRequiredService<Database>().ApplySchema(schemaPath);
+
+// POST /trades — validate, persist, and return the created trade (201).
+// The body is read manually so malformed JSON and every validation failure return the
+// same error envelope, rather than the framework's default problem-details 400.
+app.MapPost("/trades", async (HttpContext http, TradeRepository repo) =>
+{
+    CreateTradeRequest? request;
+    try
+    {
+        request = await http.Request.ReadFromJsonAsync<CreateTradeRequest>();
+    }
+    catch (JsonException)
+    {
+        return Results.Json(
+            ErrorEnvelope.Validation("Request body is not valid JSON.", null),
+            statusCode: StatusCodes.Status400BadRequest);
+    }
+
+    var (command, error) = TradeValidator.Validate(request);
+    if (error is not null)
+        return Results.Json(error, statusCode: StatusCodes.Status400BadRequest);
+
+    var trade = repo.InsertTrade(command!);
+    return Results.Created($"/trades/{trade.Id}", trade.ToResponse());
+});
 
 // GET /trades — all trades, newest first.
 app.MapGet("/trades", (TradeRepository repo) =>
