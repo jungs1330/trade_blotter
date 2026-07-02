@@ -6,6 +6,21 @@ positions automatically derived from trade history.
 - **Backend:** C# / .NET 8 minimal API + SQLite (Dapper, `Microsoft.Data.Sqlite`)
 - **Frontend:** Vue 3 (Composition API, TypeScript) + Pinia + Vite + PrimeVue 4 (Aura theme)
 
+## Design Decisions Made
+
+- Position is derviced from trades using sql view instead of using code so that other 
+  applications/reports can re-use the logic.
+- Used PrimeVue as UI compnent library.
+- Use SQLite as Database.
+- Because I had time left, I add Symbol search feature.
+
+## Other Notes
+
+- Initial prompt used is in trade-blotter-prompt.md.
+- Also add CLAUDE.md and DOCUMENTATION.md.
+- Used following skills: vue-skills-bundle and dotnet-skills.
+- Complete conversation history with Claude is in my_conversation.md.
+
 ## Prerequisites
 
 - **.NET 8 SDK** (backend). Check with `dotnet --version` (should report `8.x`).
