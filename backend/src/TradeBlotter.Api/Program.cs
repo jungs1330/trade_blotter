@@ -12,7 +12,11 @@ using TradeBlotter.Api.Validation;
 // schema.sql (idempotent), so a fresh clone gets a working DB with no manual setup.
 // =============================================================================
 
-var builder = WebApplication.CreateBuilder(args);
+// `--seed` is a one-shot flag, not host configuration. Detect it up front and keep it
+// out of the args passed to the builder (the command-line config provider would choke on
+// a valueless switch).
+var seedRequested = args.Contains("--seed");
+var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--seed").ToArray());
 
 // Connection string comes from configuration (appsettings / env). A relative
 // "Data Source=blotter.db" resolves against the process working directory (the API
@@ -30,8 +34,15 @@ var app = builder.Build();
 
 // Apply schema on startup. schema.sql is copied next to the built assembly, so we
 // resolve it relative to AppContext.BaseDirectory (stable across cwd/test hosts).
-var schemaPath = Path.Combine(AppContext.BaseDirectory, "schema.sql");
-app.Services.GetRequiredService<Database>().ApplySchema(schemaPath);
+var database = app.Services.GetRequiredService<Database>();
+database.ApplySchema(Path.Combine(AppContext.BaseDirectory, "schema.sql"));
+
+// `dotnet run -- --seed`: load demo data, then exit without starting the web server.
+if (seedRequested)
+{
+    database.Seed(Path.Combine(AppContext.BaseDirectory, "seed.sql"));
+    return;
+}
 
 // POST /trades — validate, persist, and return the created trade (201).
 // The body is read manually so malformed JSON and every validation failure return the

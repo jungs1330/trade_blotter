@@ -44,6 +44,18 @@ public sealed class Database
         _logger.LogInformation("Applied database schema from {Path}", schemaSqlPath);
     }
 
+    /// <summary>
+    /// Load demo data from <c>seed.sql</c>. The script clears existing rows first, so this
+    /// is a re-runnable "reset to known state" operation invoked via <c>dotnet run -- --seed</c>.
+    /// </summary>
+    /// <param name="seedSqlPath">Absolute path to the seed script.</param>
+    public void Seed(string seedSqlPath)
+    {
+        var sql = File.ReadAllText(seedSqlPath);
+        ExecuteScript(sql);
+        _logger.LogInformation("Seeded database from {Path}", seedSqlPath);
+    }
+
     /// <summary>Execute a multi-statement SQL script in a single transaction.</summary>
     /// <remarks>
     /// Wrapping in a transaction keeps schema/seed application atomic: if any statement

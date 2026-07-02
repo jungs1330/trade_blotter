@@ -14,10 +14,12 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.11" />
   </ItemGroup>
 
-  <!-- The DB structure lives in the repo-root schema.sql (single source of truth).
-       Copy it next to the built assembly so the app can apply it on startup. -->
+  <!-- schema.sql (DB structure, single source of truth) and seed.sql (demo data) live at
+       the repo root. Copy both next to the built assembly: schema is applied on startup,
+       seed is applied on `dotnet run -- --seed`. -->
   <ItemGroup>
     <Content Include="..\..\..\schema.sql" Link="schema.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\seed.sql" Link="seed.sql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
