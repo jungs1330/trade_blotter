@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeBlotter.Api", "src\TradeBlotter.Api\TradeBlotter.Api.csproj", "{1DD47BEF-02A5-47CC-819A-65DF157113C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeBlotter.Tests", "tests\TradeBlotter.Tests\TradeBlotter.Tests.csproj", "{5AECB0CD-DAD3-405C-9175-F733BB6D3CE7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1DD47BEF-02A5-47CC-819A-65DF157113C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DD47BEF-02A5-47CC-819A-65DF157113C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DD47BEF-02A5-47CC-819A-65DF157113C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DD47BEF-02A5-47CC-819A-65DF157113C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AECB0CD-DAD3-405C-9175-F733BB6D3CE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AECB0CD-DAD3-405C-9175-F733BB6D3CE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AECB0CD-DAD3-405C-9175-F733BB6D3CE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AECB0CD-DAD3-405C-9175-F733BB6D3CE7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {581F183A-8D42-4DFF-9BAB-586454E9171B}
+	EndGlobalSection
+EndGlobal
