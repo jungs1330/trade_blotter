@@ -22,4 +22,10 @@
     <ProjectReference Include="..\..\src\TradeBlotter.Api\TradeBlotter.Api.csproj" />
   </ItemGroup>
 
+  <!-- The endpoint tests boot the real host, which applies schema.sql from the output
+       directory (AppContext.BaseDirectory). Copy it into the test output too. -->
+  <ItemGroup>
+    <Content Include="..\..\..\schema.sql" Link="schema.sql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
