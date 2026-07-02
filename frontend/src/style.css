@@ -24,8 +24,10 @@ body {
   padding: 1.5rem;
 }
 
-/* Tabular numerals keep monetary/quantity columns vertically aligned in the tables. */
-.tabular-nums {
+/* Right-aligned, tabular numerals for monetary/quantity table columns so digits and
+   decimal points line up vertically across rows. */
+.num-cell {
+  text-align: right;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum';
 }

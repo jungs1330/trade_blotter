@@ -9,6 +9,7 @@
 import { onMounted } from 'vue'
 import Toast from 'primevue/toast'
 import TradeEntryForm from './components/TradeEntryForm.vue'
+import BlotterTable from './components/BlotterTable.vue'
 import { useBlotterStore } from './stores/blotter'
 
 const store = useBlotterStore()
@@ -32,7 +33,8 @@ onMounted(() => {
 
     <main class="app__layout">
       <TradeEntryForm />
-      <!-- PositionsPanel and BlotterTable are added in later steps. -->
+      <!-- PositionsPanel is added in the next step. -->
+      <BlotterTable />
     </main>
 
     <Toast />
