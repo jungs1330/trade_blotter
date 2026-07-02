@@ -14,4 +14,10 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.11" />
   </ItemGroup>
 
+  <!-- The DB structure lives in the repo-root schema.sql (single source of truth).
+       Copy it next to the built assembly so the app can apply it on startup. -->
+  <ItemGroup>
+    <Content Include="..\..\..\schema.sql" Link="schema.sql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
