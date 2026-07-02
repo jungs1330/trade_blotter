@@ -3,10 +3,22 @@
  * Root layout / composition surface.
  *
  * Intentionally thin: it lays out the three feature sections (entry form, positions,
- * blotter) and mounts the global <Toast/> outlet. Feature logic and shared state live in
- * the Pinia store and the child components (wired in subsequent steps).
+ * blotter), triggers the initial data load, and mounts the global <Toast/> outlet.
+ * Feature logic and shared state live in the Pinia store and the child components.
  */
+import { onMounted } from 'vue'
 import Toast from 'primevue/toast'
+import TradeEntryForm from './components/TradeEntryForm.vue'
+import { useBlotterStore } from './stores/blotter'
+
+const store = useBlotterStore()
+
+// Initial load. Errors are captured in the store (error flag); swallow the rejection
+// here so it isn't reported as an unhandled promise rejection.
+onMounted(() => {
+  store.fetchTrades().catch(() => {})
+  store.fetchPositions().catch(() => {})
+})
 </script>
 
 <template>
@@ -19,7 +31,8 @@ import Toast from 'primevue/toast'
     </header>
 
     <main class="app__layout">
-      <!-- TradeEntryForm, PositionsPanel, and BlotterTable are added in later steps. -->
+      <TradeEntryForm />
+      <!-- PositionsPanel and BlotterTable are added in later steps. -->
     </main>
 
     <Toast />
