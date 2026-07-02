@@ -1,0 +1,31 @@
+/* Global app styles: resets, base typography, and a couple of shared utilities.
+   Component-specific styling lives in each SFC's <style scoped> block. */
+
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --app-bg: #f4f6f9;
+  --app-text: #1f2937;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+#app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Tabular numerals keep monetary/quantity columns vertically aligned in the tables. */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
