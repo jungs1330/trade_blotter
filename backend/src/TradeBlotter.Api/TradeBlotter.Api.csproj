@@ -16,7 +16,7 @@
 
   <!-- schema.sql (DB structure, single source of truth) and seed.sql (demo data) live at
        the repo root. Copy both next to the built assembly: schema is applied on startup,
-       seed is applied on `dotnet run -- --seed`. -->
+       seed is applied by the seed run argument. -->
   <ItemGroup>
     <Content Include="..\..\..\schema.sql" Link="schema.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\seed.sql" Link="seed.sql" CopyToOutputDirectory="PreserveNewest" />
